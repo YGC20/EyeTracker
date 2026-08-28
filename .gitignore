@@ -1,0 +1,101 @@
+## =========================================
+## .NET / Visual Studio 기본 무시 목록
+## =========================================
+
+# 빌드 결과물
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 캐시/옵션 파일
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# MSBuild 관련
+*.binlog
+
+# NuGet 패키지
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# 테스트 결과
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# ReSharper / Rider
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.idea/
+
+# 사용자별 파일
+*.suo
+
+# ClickOnce
+publish/
+*.publishsettings
+
+# Azure / 클라우드 관련 (필요시)
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+*.publishproj
+
+# 기타 임시 파일
+*.tmp
+*.temp
+*.cache
+*~
+
+
+## =========================================
+## WPF 관련
+## =========================================
+
+# XAML 디자이너/빌드 캐시
+*.g.cs
+*.g.i.cs
+*.baml
+*.xbf
+
+
+## =========================================
+## dlib / DlibDotNet 관련
+## =========================================
+
+# dlib 사전학습 랜드마크 모델 (파일명 명시 — 확장자 전체 차단 아님)
+shape_predictor_68_face_landmarks.dat
+
+# DlibDotNet 네이티브 바이너리 (NuGet이 자동 복원, 커밋 불필요)
+DlibDotNet.Native*/
+
+
+## =========================================
+## 데이터셋 / 캘리브레이션 (로컬 전용 관리)
+## =========================================
+
+# 이미지/영상 원본 — 로컬 보관, 라벨(json/xml)만 Git으로 관리
+/dataset/
+/datasets/
+/data/raw/
+
+# 캘리브레이션 결과 데이터 (사용자별 런타임 생성값)
+calibration_data/
