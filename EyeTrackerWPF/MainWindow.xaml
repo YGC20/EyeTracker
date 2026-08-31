@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:EyeTrackerWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+    <Grid Background="Black">
+        <Image x:Name="CameraView" Stretch="Uniform"/>
+        <TextBlock x:Name="StatusText"
+               Text="카메라 연결 중..."
+               Foreground="White"
+               FontSize="16"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
     </Grid>
 </Window>

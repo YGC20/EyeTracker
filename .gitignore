@@ -99,3 +99,6 @@ DlibDotNet.Native*/
 
 # 캘리브레이션 결과 데이터 (사용자별 런타임 생성값)
 calibration_data/
+
+# CLAUDE 지시 파일
+CLAUDE.md
