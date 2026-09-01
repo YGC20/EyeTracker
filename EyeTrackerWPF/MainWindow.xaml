@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="Black">
-        <Image x:Name="CameraView" Stretch="Uniform"/>
+        <Viewbox Stretch="Uniform">
+            <Canvas x:Name="OverlayCanvas">
+                <Image x:Name="CameraView"/>
+                <Rectangle x:Name="FaceBox" Stroke="Red" StrokeThickness="2" Fill="Transparent"/>
+            </Canvas>
+        </Viewbox>
         <TextBlock x:Name="StatusText"
                Text="카메라 연결 중..."
                Foreground="White"

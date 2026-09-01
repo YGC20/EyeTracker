@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
+using System.Diagnostics.CodeAnalysis;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 
@@ -7,7 +8,9 @@ namespace EyeTrackerWPF.Vision
     public sealed class FrameCaptureService : IDisposable
     {
         private readonly object _frameLock = new();
+        private readonly object _matLock = new();
         private BitmapSource? _latestFrame;
+        private Mat? _latestMat;
         private Thread? _captureThread;
         private CancellationTokenSource? _cts;
         
@@ -31,12 +34,22 @@ namespace EyeTrackerWPF.Vision
             _captureThread = null;
         }
 
-        public bool TryGetLatestFrame(out BitmapSource? frame)
+        public bool 
+            TryGetLatestFrame([NotNullWhen(true)]out BitmapSource? frame)
         {
             lock(_frameLock)
             {
                 frame = _latestFrame;
                 return frame is not null;
+            }
+        }
+        public bool 
+            TryGetLatestMat([NotNullWhen(true)] out Mat? mat)
+        {
+            lock (_matLock)
+            {
+                mat = _latestMat?.Clone();
+                return mat is not null;
             }
         }
 
@@ -57,6 +70,12 @@ namespace EyeTrackerWPF.Vision
                     if (!capture.Read(mat) || mat.Empty())
                     {
                         continue;
+                    }
+
+                    lock (_matLock)
+                    {
+                        _latestMat?.Dispose();
+                        _latestMat = mat.Clone();
                     }
 
                     var bitmap = mat.ToBitmapSource();
