@@ -84,9 +84,6 @@ publish/
 # dlib 사전학습 랜드마크 모델 (파일명 명시 — 확장자 전체 차단 아님)
 shape_predictor_68_face_landmarks.dat
 
-# DlibDotNet 네이티브 바이너리 (NuGet이 자동 복원, 커밋 불필요)
-DlibDotNet.Native*/
-
 
 ## =========================================
 ## 데이터셋 / 캘리브레이션 (로컬 전용 관리)
