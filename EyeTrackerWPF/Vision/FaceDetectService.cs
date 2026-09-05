@@ -11,10 +11,12 @@ namespace EyeTrackerWPF.Vision
         private Thread? _detectThread;
         private CancellationTokenSource? _cts;
         private readonly FrameCaptureService _frameSource;
+        private readonly FaceTracker _faceTracker;
 
         public FaceDetectService(FrameCaptureService frameSource)
         {
             _frameSource = frameSource;
+            _faceTracker = new FaceTracker();
         }
 
         public bool IsRunning => _detectThread is { IsAlive: true };
@@ -72,7 +74,7 @@ namespace EyeTrackerWPF.Vision
 
                         lock (_resultLock)
                         {
-                            _latestResult = faces.Length > 0 ? faces[0] : (Rectangle?)null;
+                            _latestResult = _faceTracker.SelectFace(faces);
                         }
                     }
 
