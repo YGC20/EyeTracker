@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using EyeTrackerWPF.Vision;
 
 namespace EyeTrackerWPF
@@ -10,12 +11,14 @@ namespace EyeTrackerWPF
         private bool _hasError;
         private readonly FrameCaptureService _captureService;
         private readonly FaceDetectService _detectService;
+        private readonly CharacterStateMachine _stateMachine;
 
         public MainWindow()
         {
             InitializeComponent();
             _captureService = new FrameCaptureService();
             _detectService = new FaceDetectService(_captureService);
+            _stateMachine = new CharacterStateMachine();
             Loaded += OnLoaded;
             Closing += OnClosing;
         }
@@ -82,6 +85,12 @@ namespace EyeTrackerWPF
                 LeftPupilMark.Visibility = Visibility.Collapsed;
                 RightPupilMark.Visibility = Visibility.Collapsed;
             }
+
+            var gaze = _stateMachine.Update(result, (int)OverlayCanvas.Width, (int)OverlayCanvas.Height);
+            double dx = gaze.Dx;
+            double dy = gaze.Dy;
+            PositionPupil(LeftEyeWhite, LeftEyePupil, dx, dy);
+            PositionPupil(RightEyeWhite, RightEyePupil, dx, dy);
         }
         private void OnCaptureError(Exception ex)
         {
@@ -108,6 +117,21 @@ namespace EyeTrackerWPF
             _detectService.Dispose();
             _captureService.CaptureError -= OnCaptureError;
             _captureService.Dispose();
+        }
+
+        private static void PositionPupil(Ellipse eyeWhite, Ellipse pupil, double dx, double dy)
+        {
+            double rangeX = (eyeWhite.Width - pupil.Width) / 2.0;
+            double rangeY = (eyeWhite.Height - pupil.Height) / 2.0;
+
+            double eyeLeft = Canvas.GetLeft(eyeWhite);
+            double eyeTop = Canvas.GetTop(eyeWhite);
+
+            double pupilLeft = eyeLeft + eyeWhite.Width / 2.0 - pupil.Width / 2.0 + dx * rangeX;
+            double pupilTop = eyeTop + eyeWhite.Height / 2.0 - pupil.Height / 2.0 + dy * rangeY;
+
+            Canvas.SetLeft(pupil, pupilLeft);
+            Canvas.SetTop(pupil, pupilTop);
         }
     }
 }

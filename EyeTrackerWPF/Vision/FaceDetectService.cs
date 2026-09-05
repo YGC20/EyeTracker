@@ -14,6 +14,9 @@ namespace EyeTrackerWPF.Vision
         private readonly FrameCaptureService _frameSource;
         private readonly FaceTracker _faceTracker;
 
+        private readonly PositionSmoother _leftSmoother = new(0.3);
+        private readonly PositionSmoother _rightSmoother = new(0.3);
+
         public FaceDetectService(FrameCaptureService frameSource)
         {
             _frameSource = frameSource;
@@ -90,16 +93,21 @@ namespace EyeTrackerWPF.Vision
                             {
                                 leftEye[i - 36] = shape.GetPart((uint)i);
                             }
-                            var leftPupil = PupilDetector.DetectPupil(gray, leftEye);
+                            var leftPupil = _leftSmoother.Smooth(PupilDetector.DetectPupil(gray, leftEye));
 
                             Point[] rightEye = new Point[6];
                             for(int i=42; i<=47; ++i)
                             {
                                 rightEye[i - 42] = shape.GetPart((uint)i);
                             }
-                            var rightPupil = PupilDetector.DetectPupil(gray, rightEye);
-
+                            var rightPupil = _rightSmoother.Smooth(PupilDetector.DetectPupil(gray, rightEye));
+                            
                             result = new FaceTrackingResult(selectedFace.Value, leftEye, rightEye, leftPupil, rightPupil);
+                        }
+                        else
+                        {
+                            _leftSmoother.Reset();
+                            _rightSmoother.Reset();
                         }
 
                         lock (_resultLock)
