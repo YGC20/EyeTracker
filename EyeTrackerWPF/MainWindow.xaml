@@ -11,6 +11,8 @@
             <Canvas x:Name="OverlayCanvas">
                 <Image x:Name="CameraView"/>
                 <Rectangle x:Name="FaceBox" Stroke="Red" StrokeThickness="2" Fill="Transparent"/>
+                <Ellipse x:Name="LeftPupilMark" Width="6" Height="6" Fill="Lime" Visibility="Collapsed"/>
+                <Ellipse x:Name="RightPupilMark" Width="6" Height="6" Fill="Lime" Visibility="Collapsed"/>
             </Canvas>
         </Viewbox>
         <TextBlock x:Name="StatusText"

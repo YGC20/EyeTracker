@@ -15,4 +15,10 @@
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.13.0.20260627" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Models\shape_predictor_68_face_landmarks.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

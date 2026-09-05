@@ -1,4 +1,5 @@
 ﻿using DlibDotNet;
+using System.IO;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -7,7 +8,7 @@ namespace EyeTrackerWPF.Vision
     public sealed class FaceDetectService : IDisposable
     {
         private readonly object _resultLock = new();
-        private Rectangle? _latestResult;
+        private FaceTrackingResult? _latestResult;
         private Thread? _detectThread;
         private CancellationTokenSource? _cts;
         private readonly FrameCaptureService _frameSource;
@@ -40,12 +41,12 @@ namespace EyeTrackerWPF.Vision
         }
 
         public bool 
-            TryGetLatestFace([NotNullWhen(true)]out Rectangle? face)
+            TryGetLatestTrackingResult([NotNullWhen(true)]out FaceTrackingResult? result)
         {
             lock(_resultLock)
             {
-                face = _latestResult;
-                return face is not null;
+                result = _latestResult;
+                return result is not null;
             }
         }
 
@@ -55,6 +56,9 @@ namespace EyeTrackerWPF.Vision
             try
             {
                 using var detector = Dlib.GetFrontalFaceDetector();
+                using var shapePredictor = 
+                    ShapePredictor.Deserialize(Path.Combine(
+                        AppContext.BaseDirectory,"Models","shape_predictor_68_face_landmarks.dat"));
                 while (!token.IsCancellationRequested)
                 {
                     if (!frameSource.TryGetLatestMat(out var mat))
@@ -72,9 +76,35 @@ namespace EyeTrackerWPF.Vision
                             pixelData, (uint)mat.Rows, (uint)mat.Cols, (uint)mat.Step());
                         var faces = detector.Operator(img);
 
+                        var selectedFace = _faceTracker.SelectFace(faces);
+                        FaceTrackingResult? result = null;
+                        if(selectedFace is not null)
+                        {
+                            var shape = shapePredictor.Detect(img, selectedFace.Value);
+                            using var gray = new OpenCvSharp.Mat();
+                            OpenCvSharp.Cv2.CvtColor(mat, gray,
+                                OpenCvSharp.ColorConversionCodes.BGR2GRAY);
+                            
+                            Point[] leftEye = new Point[6];
+                            for(int i=36; i<=41; ++i)
+                            {
+                                leftEye[i - 36] = shape.GetPart((uint)i);
+                            }
+                            var leftPupil = PupilDetector.DetectPupil(gray, leftEye);
+
+                            Point[] rightEye = new Point[6];
+                            for(int i=42; i<=47; ++i)
+                            {
+                                rightEye[i - 42] = shape.GetPart((uint)i);
+                            }
+                            var rightPupil = PupilDetector.DetectPupil(gray, rightEye);
+
+                            result = new FaceTrackingResult(selectedFace.Value, leftEye, rightEye, leftPupil, rightPupil);
+                        }
+
                         lock (_resultLock)
                         {
-                            _latestResult = _faceTracker.SelectFace(faces);
+                            _latestResult = result;
                         }
                     }
 

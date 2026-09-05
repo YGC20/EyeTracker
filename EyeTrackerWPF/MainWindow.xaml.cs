@@ -44,16 +44,43 @@ namespace EyeTrackerWPF
                 }
             }
 
-            if(_detectService.TryGetLatestFace(out var face))
+            if(_detectService.TryGetLatestTrackingResult(out var result))
             {
                 FaceBox.Visibility = Visibility.Visible;
-                Canvas.SetLeft(FaceBox, face.Value.Left);
-                Canvas.SetTop(FaceBox, face.Value.Top);
-                FaceBox.Width = face.Value.Right - face.Value.Left;
-                FaceBox.Height = face.Value.Bottom - face.Value.Top;
+
+                if(result.LeftPupil is not null)
+                {
+                    LeftPupilMark.Visibility = Visibility.Visible;
+                    Canvas.SetLeft(LeftPupilMark, result.LeftPupil.Value.X - LeftPupilMark.Width / 2);
+                    Canvas.SetTop(LeftPupilMark, result.LeftPupil.Value.Y - LeftPupilMark.Height / 2);
+                }
+                else
+                {
+                    LeftPupilMark.Visibility = Visibility.Collapsed;
+                }
+
+                if(result.RightPupil is not null)
+                {
+                    RightPupilMark.Visibility = Visibility.Visible;
+                    Canvas.SetLeft(RightPupilMark, result.RightPupil.Value.X - RightPupilMark.Width / 2);
+                    Canvas.SetTop(RightPupilMark, result.RightPupil.Value.Y - RightPupilMark.Height / 2);
+                }
+                else
+                {
+                    RightPupilMark.Visibility = Visibility.Collapsed;
+                }
+                
+
+                Canvas.SetLeft(FaceBox, result.Face.Left);
+                Canvas.SetTop(FaceBox, result.Face.Top);
+
+                FaceBox.Width = result.Face.Right - result.Face.Left;
+                FaceBox.Height = result.Face.Bottom - result.Face.Top;
             } else
             {
                 FaceBox.Visibility = Visibility.Collapsed;
+                LeftPupilMark.Visibility = Visibility.Collapsed;
+                RightPupilMark.Visibility = Visibility.Collapsed;
             }
         }
         private void OnCaptureError(Exception ex)
