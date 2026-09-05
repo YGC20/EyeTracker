@@ -66,7 +66,8 @@ namespace EyeTrackerWPF.Vision
                         int byteLenght = mat.Rows * (int)mat.Step();
                         var pixelData = new byte[byteLenght];
                         Marshal.Copy(mat.Data, pixelData, 0, byteLenght);
-                        using var img = Dlib.LoadImageData<BgrPixel>(pixelData, (uint)mat.Rows, (uint)mat.Cols, (uint)mat.Step());
+                        using var img = Dlib.LoadImageData<BgrPixel>(
+                            pixelData, (uint)mat.Rows, (uint)mat.Cols, (uint)mat.Step());
                         var faces = detector.Operator(img);
 
                         lock (_resultLock)
