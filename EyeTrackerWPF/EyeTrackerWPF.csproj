@@ -9,9 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DlibDotNet" Version="19.21.0.20220724" />
     <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260627" />
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.13.0.20260627" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Models\shape_predictor_68_face_landmarks.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
