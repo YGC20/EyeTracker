@@ -28,6 +28,9 @@ bld/
 # MSBuild 관련
 *.binlog
 
+# WPF 디자인타임 빌드가 프로젝트 폴더에 남기는 임시 csproj (obj/ 밖에 생기는 경우 대비)
+*_wpftmp.*
+
 # NuGet 패키지
 *.nupkg
 *.snupkg

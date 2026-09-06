@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
+using System.Diagnostics.CodeAnalysis;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 
@@ -8,9 +9,18 @@ namespace EyeTrackerWPF.Vision
     {
         private readonly object _frameLock = new();
         private BitmapSource? _latestFrame;
+
+        private readonly object _matLock = new();
+        private Mat? _latestMat;
+
+        public double Gamma { get; set; } = 1.8;
+        private double _lastBuiltGamma;
+        private Mat? _gammaLut;
+
+
         private Thread? _captureThread;
         private CancellationTokenSource? _cts;
-        
+
         public bool IsRunning => _captureThread is { IsAlive: true };
         public void Start(int cameraIndex = 0)
         {
@@ -31,13 +41,50 @@ namespace EyeTrackerWPF.Vision
             _captureThread = null;
         }
 
-        public bool TryGetLatestFrame(out BitmapSource? frame)
+        public bool
+            TryGetLatestFrame([NotNullWhen(true)] out BitmapSource? frame)
         {
-            lock(_frameLock)
+            lock (_frameLock)
             {
                 frame = _latestFrame;
                 return frame is not null;
             }
+        }
+        public bool
+            TryGetLatestMat([NotNullWhen(true)] out Mat? mat)
+        {
+            lock (_matLock)
+            {
+                mat = _latestMat?.Clone();
+                return mat is not null;
+            }
+        }
+
+        private static Mat BuildGammaLut(double gamma)
+        {
+            Mat lut = new Mat(1, 256, MatType.CV_8UC1);
+            for (int i = 0; i < 256; ++i)
+            {
+                double output = 255 * Math.Pow((i / 255.0), (1.0 / gamma));
+                lut.Set<byte>(0, i, (byte)Math.Clamp(output, 0, 255));
+            }
+            return lut;
+        }
+        private void ApplyGammaCorrection(Mat mat)
+        {
+            if (Gamma <= 0 || Math.Abs(Gamma-1.0) < 1e-6)
+            {
+                return;
+            }
+
+            if(_gammaLut is null || Math.Abs(_lastBuiltGamma - Gamma) > 1e-6)
+            {
+                _gammaLut?.Dispose();
+                _gammaLut = BuildGammaLut(Gamma);
+                _lastBuiltGamma = Gamma;
+            }
+
+            Cv2.LUT(mat, _gammaLut, mat);
         }
 
         public event Action<Exception>? CaptureError;
@@ -59,6 +106,14 @@ namespace EyeTrackerWPF.Vision
                         continue;
                     }
 
+                    ApplyGammaCorrection(mat);
+
+                    lock (_matLock)
+                    {
+                        _latestMat?.Dispose();
+                        _latestMat = mat.Clone();
+                    }
+
                     var bitmap = mat.ToBitmapSource();
                     bitmap.Freeze();
 
@@ -76,6 +131,15 @@ namespace EyeTrackerWPF.Vision
             {
                 capture?.Release();
                 capture?.Dispose();
+
+                lock (_matLock)
+                {
+                    _latestMat?.Dispose();
+                    _latestMat = null;
+                }
+
+                _gammaLut?.Dispose();
+                _gammaLut = null;
             }
         }
 
