@@ -1,6 +1,6 @@
 ﻿using DlibDotNet;
 
-namespace EyeTrackerWPF.Vision
+namespace LookAtCat.Vision
 {
     public sealed record FaceTrackingResult(
         Rectangle Face, 

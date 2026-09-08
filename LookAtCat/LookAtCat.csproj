@@ -21,4 +21,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Image\catImage.png" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using OpenCvSharp;
 
-namespace EyeTrackerWPF.Vision
+namespace LookAtCat.Vision
 {
     public class PupilDetector
     {

@@ -1,4 +1,4 @@
-# EyeTracker
+# LookAtCat
 
 웹캠으로 얼굴 위치를 추적해서, 캐릭터의 눈이 그 방향을 따라 움직이는 WPF 인터랙션 프로젝트입니다.
 컴퓨터 비전 파트는 검증된 라이브러리(OpenCV, dlib)를 활용하고, 스레드 아키텍처·상태 관리·캐릭터 반응 로직 구현에 집중했습니다.
@@ -28,14 +28,14 @@
 - **요구 사항**: Windows, Visual Studio(.NET 10 SDK 워크로드 포함), 웹캠
 - **랜드마크 모델 파일 별도 다운로드 필요** (용량 문제로 저장소에는 미포함, `.gitignore` 처리됨):
   1. [shape_predictor_68_face_landmarks.dat.bz2](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2) 다운로드 후 압축 해제
-  2. `EyeTrackerWPF/Models/shape_predictor_68_face_landmarks.dat` 경로에 저장
-- `EyeTracker.slnx` 솔루션을 Visual Studio로 열고 `EyeTrackerWPF`를 실행합니다 (NuGet 패키지는 자동 복원됩니다).
+  2. `LookAtCat/Models/shape_predictor_68_face_landmarks.dat` 경로에 저장
+- `LookAtCat.slnx` 솔루션을 Visual Studio로 열고 `LookAtCat`을 실행합니다 (NuGet 패키지는 자동 복원됩니다).
 
 ## 프로젝트 구조
 
 ```
-EyeTracker/
-├─ EyeTrackerWPF/
+LookAtCat/                              # 저장소 루트
+├─ LookAtCat/                           # WPF 프로젝트
 │  ├─ Vision/
 │  │  ├─ FrameCaptureService.cs      # 백그라운드 스레드에서 웹캠 프레임 캡처 + 감마 보정
 │  │  ├─ FaceDetectService.cs        # 별도 스레드: 얼굴 검출 → 랜드마크 → 동공 검출 파이프라인
@@ -48,8 +48,8 @@ EyeTracker/
 │  ├─ Models/
 │  │  └─ shape_predictor_68_face_landmarks.dat  # dlib 68점 랜드마크 모델 (별도 다운로드)
 │  ├─ MainWindow.xaml(.cs)           # 웹캠 디버그 오버레이 + 캐릭터 눈 렌더링
-│  └─ EyeTrackerWPF.csproj
-└─ EyeTracker.slnx
+│  └─ LookAtCat.csproj
+└─ LookAtCat.slnx
 ```
 
 ## 아키텍처
