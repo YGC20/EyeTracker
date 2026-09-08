@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace EyeTrackerWPF
+namespace LookAtCat
 {
     /// <summary>
     /// Interaction logic for App.xaml

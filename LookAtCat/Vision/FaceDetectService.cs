@@ -3,7 +3,7 @@ using System.IO;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace EyeTrackerWPF.Vision
+namespace LookAtCat.Vision
 {
     public sealed class FaceDetectService : IDisposable
     {

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 
-namespace EyeTrackerWPF.Vision
+namespace LookAtCat.Vision
 {
     public sealed class FrameCaptureService : IDisposable
     {

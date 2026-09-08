@@ -1,4 +1,4 @@
-﻿namespace EyeTrackerWPF.Vision
+﻿namespace LookAtCat.Vision
 {
     public class CharacterStateMachine
     {
